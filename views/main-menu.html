@@ -14,11 +14,47 @@
 
 <body>
     <section id="container" class="container">
+        <!-- Section Login -->
         <div class="row">
             <div class="login col-12">
-                <button type="button" class="btn btn-outline-light float-right text-end">Login</button>
+                <button type="button" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal" data-bs-whatever="@mdo">Login</button>
+            </div>
+            <!-- Modal Login -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true" class="w-50">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5 text-center" id="exampleModalLabel">Login to Your Account!
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <form>
+                                <div class="form-outline mb-4">
+                                    <input type="email" id="form2Example1" class="form-control" placeholder="Email" />
+                                </div>
+                                <div class="form-outline mb-2">
+                                    <input type="password" id="form2Example2" class="form-control"
+                                        placeholder="Password" />
+                                    <p><a href="#!" class="sign-up text-end">Don’t have account? Sign Up!</a></p>
+                                </div>
+                                <button type="button"
+                                    class="btn-login mb-4 text-center float-md-none align-middle w-50">Log
+                                    In</button>
+                            </form>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Send message</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- Section Text -->
         <div class="row">
             <div class="rendora text-center text-white">
                 <img src="../assets/img/textRendora.svg" alt="text-rendora">

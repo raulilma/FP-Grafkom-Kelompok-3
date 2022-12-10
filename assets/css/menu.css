@@ -5,10 +5,21 @@ body{
     background-size: cover;
     font-family: 'Poppins', sans-serif;
 }
+/* Login */
 .login{
     padding-left: 90%;
     padding-top: 5%;
 }
+/* Modal */
+.btn-login{
+    background: linear-gradient(180deg, #5561FF 0%, #3643FC 100%, #3643FC 100%);
+    border-radius: 6px;
+}
+.sign-up{
+    text-decoration:none;
+    padding-left: 40%;
+}
+/* Play */
 .tombol-play{
     background: linear-gradient(180deg, #FBA440 0%, #FD4C1E 100%);
     box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.2);
