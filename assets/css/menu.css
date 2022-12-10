@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins&display=swap');
+
+body{
+    background-image: url(../img/bgMenu.svg);
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+}
+.login{
+    padding-left: 90%;
+    padding-top: 5%;
+}
+.tombol-play{
+    background: linear-gradient(180deg, #FBA440 0%, #FD4C1E 100%);
+    box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+}
