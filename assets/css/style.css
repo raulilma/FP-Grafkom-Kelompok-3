@@ -1,0 +1,12 @@
+body {
+	margin: 0;
+}
+
+.world {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: -webkit-linear-gradient(135deg,#26095a, #0d004b, #072f7e, #2467cc, #3e86e5);
+	background: linear-gradient(135deg, #26095a, #0d004b, #072f7e, #2467cc, #3e86e5);
+}
