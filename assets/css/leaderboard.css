@@ -4,6 +4,10 @@ body{
     background-image: url(../img/bgLeaderboard.svg);
     background-size: cover;
     font-family: 'Poppins', sans-serif;
+    height: 100vh;
+}
+#container{
+    height: 100%;
 }
 .row{
     margin-right: 0;
@@ -11,4 +15,61 @@ body{
 .form-leaderboard{
     background: rgba(54, 57, 81, 0.4);
     border-radius: 12px;
+}
+.table-container{
+    width: 673px;
+    background: rgba(54, 57, 81, 0.4);
+    border-radius: 12px 12px 0 0;
+    padding: 27px 63px 27px 63px;
+    position: fixed;
+    top: 35%;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
+    overflow: auto;
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}
+.table-container::-webkit-scrollbar {
+    display: none;
+}
+.table{
+    color: white;
+}
+tbody, td, tfoot, th, thead, tr{
+    border-style: none;
+}
+thead{
+    color: black;
+}
+tbody:before {
+    line-height:1em;
+    content:".";
+    color:transparent;
+    display:block;
+}
+.border-th-right{
+    border-radius: 0 6px 6px 0;
+}
+.border-th-left{
+    border-radius: 6px 0 0 6px;
+}
+.name{
+    color: #B5B5C3;
+}
+.rank{
+    background-color: #252525;
+    border-radius: 6px;
+    width: 53px;
+    height: 23px;
+    text-align: center;
+}
+.rank1{
+    background-color: #FFD739;
+}
+.rank2{
+    background-color: #B3B3B3;
+}
+.rank3{
+    background-color: #C38762;
 }
