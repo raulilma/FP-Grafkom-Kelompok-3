@@ -1,6 +1,7 @@
 var Colors = {
     white:0xd8d0d1,
     blue:0x68c3c0,
+    orange:0xFBA440,
 };
 let ColorsRocket = {
   white: 0xffffff,
@@ -32,7 +33,7 @@ function resetGame(){
           baseSpeed:.00035,
           targetBaseSpeed:.00035,
           incrementSpeedByTime:.0000025,
-          incrementSpeedBybestscore:.000005,
+          incrementSpeedBylevel:.000005,
           jarakForSpeedUpdate:100,
           speedLastUpdate:0,
 
@@ -42,9 +43,9 @@ function resetGame(){
           health:100,
           ratioSpeedhealth:3,
 
-          bestscore:1,
-          bestscoreLastUpdate:0,
-          jarakForbestscoreUpdate:1000,
+          level:1,
+          levelLastUpdate:0,
+          jarakForlevelUpdate:1000,
 
           planeDefaultHeight:100,
           planeAmpHeight:80,
@@ -76,9 +77,9 @@ function resetGame(){
 
           coinjarakTolerance:15,
           coinValue:1,
-          coinsSpeed:.5,
+          starsSpeed:.5,
           coinLastSpawn:0,
-          jarakForCoinsSpawn:100,
+          jarakForStarsSpawn:100,
 
           asteroidjarakTolerance:10,
           asteroidValue:10,
@@ -90,11 +91,11 @@ function resetGame(){
           scalerValue:10,
           scalersSpeed:.6,
           scalerLastSpawn:0,
-          jarakForScalersSpawn:233,
+          jarakForScalersSpawn:203,
 
           status : "playing",
          };
-  fieldbestscore.innerHTML = Math.floor(game.bestscore);
+  // fieldlevel.innerHTML = Math.floor(game.level);
 }
 var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, renderer, container;
 
@@ -524,7 +525,7 @@ ScalersHolder = function (){
 }
 
 ScalersHolder.prototype.spawnScalers = function(){
-  var nScalers = game.bestscore;
+  var nScalers = game.level;
 
   for (var i=0; i<nScalers; i++){
     var scaler;
@@ -560,12 +561,12 @@ ScalersHolder.prototype.rotateScalers = function(){
     var diffPos = rocket.mesh.position.clone().sub(scaler.mesh.position.clone());
     var d = diffPos.length();
     if (d<game.scalerjarakTolerance){
-      particlesHolder.spawnParticles(scaler.mesh.position.clone(), 15, Colors.red, 3);
+      particlesHolder.spawnParticles(scaler.mesh.position.clone(), 15, Colors.blue, 3);
 
       poolScaler.unshift(this.scalersInUse.splice(i,1)[0]);
       this.mesh.remove(scaler.mesh);
-      game.planeCollisionSpeedX = 100 * diffPos.x / d;
-      game.planeCollisionSpeedY = 100 * diffPos.y / d;
+      game.planeCollisionSpeedX = 50 * diffPos.x / d;
+      game.planeCollisionSpeedY = 50 * diffPos.y / d;
       ambientLight.intensity = 2;
 
       multiplySize();
@@ -598,7 +599,7 @@ AsteroidsHolder = function (){
 }
 
 AsteroidsHolder.prototype.spawnAsteroids = function(){
-  var nAsteroids = game.bestscore;
+  var nAsteroids = game.level;
 
   for (var i=0; i<nAsteroids; i++){
     var asteroid;
@@ -720,30 +721,30 @@ Coin = function(){
   this.skor = 0;
 }
 
-CoinsHolder = function (nCoins){
+StarsHolder = function (nStars){
   this.mesh = new THREE.Object3D();
-  this.coinsInUse = [];
-  this.coinsPool = [];
-  for (var i=0; i<nCoins; i++){
+  this.starsInUse = [];
+  this.starsPool = [];
+  for (var i=0; i<nStars; i++){
     var coin = new Coin();
-    this.coinsPool.push(coin);
+    this.starsPool.push(coin);
   }
 }
 
-CoinsHolder.prototype.spawnCoins = function(){
+StarsHolder.prototype.spawnStars = function(){
 
-  var nCoins = 1 + Math.floor(Math.random()*10);
+  var nStars = 1 + Math.floor(Math.random()*10);
   var d = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
   var amplitude = 10 + Math.round(Math.random()*10);
-  for (var i=0; i<nCoins; i++){
+  for (var i=0; i<nStars; i++){
     var coin;
-    if (this.coinsPool.length) {
-      coin = this.coinsPool.pop();
+    if (this.starsPool.length) {
+      coin = this.starsPool.pop();
     }else{
       coin = new Coin();
     }
     this.mesh.add(coin.mesh);
-    this.coinsInUse.push(coin);
+    this.starsInUse.push(coin);
     coin.angle = - (i*0.02);
     coin.jarak = d + Math.cos(i*.5)*amplitude;
     coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle)*coin.jarak;
@@ -751,11 +752,11 @@ CoinsHolder.prototype.spawnCoins = function(){
   }
 }
 
-CoinsHolder.prototype.rotateCoins = function(){
-  for (var i=0; i<this.coinsInUse.length; i++){
-    var coin = this.coinsInUse[i];
+StarsHolder.prototype.rotateStars = function(){
+  for (var i=0; i<this.starsInUse.length; i++){
+    var coin = this.starsInUse[i];
     if (coin.exploding) continue;
-    coin.angle += game.speed*deltaTime*game.coinsSpeed;
+    coin.angle += game.speed*deltaTime*game.starsSpeed;
     if (coin.angle>Math.PI*2) coin.angle -= Math.PI*2;
     coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle)*coin.jarak;
     coin.mesh.position.x = Math.cos(coin.angle)*coin.jarak;
@@ -766,14 +767,14 @@ CoinsHolder.prototype.rotateCoins = function(){
     var diffPos = rocket.mesh.position.clone().sub(coin.mesh.position.clone());
     var d = diffPos.length();
     if (d<game.coinjarakTolerance){
-      this.coinsPool.unshift(this.coinsInUse.splice(i,1)[0]);
+      this.starsPool.unshift(this.starsInUse.splice(i,1)[0]);
       this.mesh.remove(coin.mesh);
       particlesHolder.spawnParticles(coin.mesh.position.clone(), 5, 0x009999, .8);
       addscore();
       // addhealth();
       i--;
     }else if (coin.angle > Math.PI){
-      this.coinsPool.unshift(this.coinsInUse.splice(i,1)[0]);
+      this.starsPool.unshift(this.starsInUse.splice(i,1)[0]);
       this.mesh.remove(coin.mesh);
       i--;
     }
@@ -885,7 +886,7 @@ class Rocket {
     let yPlacement = -310;
     let xPlacement = 8;
     let yRotation = 1.6;
-    let scale = 1.8;
+    let scale = 1.9;
     let finWidth = 15;
     let mFinLeft = new THREE.Mesh(geoFin, matRoof3);
     mFinLeft.position.y = yPlacement;
@@ -985,7 +986,11 @@ function createPlane(){
   console.log(rocket);
   rocket.mesh.scale.set(.05,.05,.05);
   // rocket.mesh.position.y = -40;
-  rocket.mesh.rotation.x = 180;
+  rocket.base.rotation.x = 1.6;
+  rocket.body.rotation.x = 1.6;
+  rocket.mesh.rotation.x = 1.6;
+  rocket.roof.rotation.x = 1.6;
+  rocket.window.rotation.x = 1.6;
   rocket.mesh.rotation.y = 1.5;
   rocket.mesh.position.y = game.planeDefaultHeight;
   scene.add(rocket.mesh);
@@ -1003,10 +1008,10 @@ function createSky(){
   scene.add(sky.mesh);
 }
 
-function createCoins(){
+function createStars(){
 
-  coinsHolder = new CoinsHolder(20);
-  scene.add(coinsHolder.mesh)
+  starsHolder = new StarsHolder(20);
+  scene.add(starsHolder.mesh)
 }
 
 function createScalers(){
@@ -1045,10 +1050,10 @@ function loop(){
 
   if (game.status=="playing"){
 
-    // Add health coins every 100m;
-    if (Math.floor(game.jarak)%game.jarakForCoinsSpawn == 0 && Math.floor(game.jarak) > game.coinLastSpawn){
+    // Add health stars every 100m;
+    if (Math.floor(game.jarak)%game.jarakForStarsSpawn == 0 && Math.floor(game.jarak) > game.coinLastSpawn){
       game.coinLastSpawn = Math.floor(game.jarak);
-      coinsHolder.spawnCoins();
+      starsHolder.spawnStars();
     }
 
     if (Math.floor(game.jarak)%game.jarakForSpeedUpdate == 0 && Math.floor(game.jarak) > game.speedLastUpdate){
@@ -1066,12 +1071,12 @@ function loop(){
       asteroidsHolder.spawnAsteroids();
     }
 
-    if (Math.floor(game.jarak)%game.jarakForbestscoreUpdate == 0 && Math.floor(game.jarak) > game.bestscoreLastUpdate){
-      game.bestscoreLastUpdate = Math.floor(game.jarak);
-      game.bestscore++;
-      fieldbestscore.innerHTML = Math.floor(game.bestscore);
+    if (Math.floor(game.jarak)%game.jarakForlevelUpdate == 0 && Math.floor(game.jarak) > game.levelLastUpdate){
+      game.levelLastUpdate = Math.floor(game.jarak);
+      game.level++;
+      // fieldlevel.innerHTML = Math.floor(game.level);
 
-      game.targetBaseSpeed = game.initSpeed + game.incrementSpeedBybestscore*game.bestscore
+      game.targetBaseSpeed = game.initSpeed + game.incrementSpeedBylevel*game.level
     }
 
 
@@ -1105,7 +1110,7 @@ function loop(){
 
   ambientLight.intensity += (.5 - ambientLight.intensity)*deltaTime*0.005;
 
-  coinsHolder.rotateCoins();
+  starsHolder.rotateStars();
   asteroidsHolder.rotateAsteroids();
   scalersHolder.rotateScalers();
 
@@ -1137,9 +1142,9 @@ function addhealth(){
 }
 
 function multiplySize(){
-  rocket.mesh.scale.x *= 2;
-  rocket.mesh.scale.y *= 2;
-  rocket.mesh.scale.z *= 2;
+  rocket.mesh.scale.x *= 1.5;
+  rocket.mesh.scale.y *= 1.5;
+  rocket.mesh.scale.z *= 1.5;
 }
 
 function removehealth(){
@@ -1206,14 +1211,14 @@ function normalize(v,vmin,vmax,tmin, tmax){
   return tv;
 }
 
-var fieldscore, healthBar, replayMessage, fieldbestscore;
+var fieldscore, healthBar, replayMessage, fieldlevel;
 
 function init(event){
   // UI
   fieldscore = document.getElementById("skorValue");
   healthBar = document.getElementById("healthBar");
   replayMessage = document.getElementById("replayMessage");
-  fieldbestscore = document.getElementById("bestscoreValue");
+  // fieldlevel = document.getElementById("bValue");
 
   resetGame();
   createScene();
@@ -1222,7 +1227,7 @@ function init(event){
   createPlane();
   createSea();
   createSky();
-  createCoins();
+  createStars();
   createScalers();
   createAsteroids();
   createParticles();
