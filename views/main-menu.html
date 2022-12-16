@@ -16,10 +16,10 @@
     <section id="container" class="container">
         <!-- Section Login -->
         <div class="row">
-            <div class="login col-6">
+            <div class="login col">
                 <button type="button" id="username" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
-                    data-bs-target="#exampleModal" data-bs-whatever="@mdo">Nur</button>
-                    <button type="button" onclick="logout()" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal" data-bs-whatever="@mdo">-</button>
+                <button type="button" onclick="logout()" class="btn btn-light float-right text-end" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" data-bs-whatever="@mdo">Logout</button>
             </div>
         </div>
@@ -76,7 +76,7 @@
                 .once("value")
                 .then(function (snapshot) {
                     if (snapshot.val() != null) {
-                        var username = snapshot.val().username;
+                        var username = snapshot.val().Username;
                         document.getElementById("username").innerHTML = username;
                     }
                 });
