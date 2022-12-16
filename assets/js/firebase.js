@@ -9,6 +9,17 @@ const firebaseConfig = {
   measurementId: "G-W0YDNYYHLY"
 };
 
+// konversi snapshot data hasil query firebase ke bentuk object array
+function snapshotToArray(snapshot) {
+  var hasilArr = [];
+  snapshot.forEach(function(childSnapshot) {
+      var item = childSnapshot.val();
+      item.key = childSnapshot.key;
+      hasilArr.push(item);
+  });
+  return hasilArr;
+};
+
 // sistem autorisasi Rendora: login, register, logout, verifikasi email
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
