@@ -535,7 +535,6 @@ ScalersHolder.prototype.spawnScalers = function(){
       scaler = new Scaler();
     }
 
-    console.log(scaler);
     scaler.angle = - (i*0.1);
     scaler.jarak = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
     scaler.mesh.position.y = -game.seaRadius + Math.sin(scaler.angle)*scaler.jarak;
@@ -608,7 +607,6 @@ AsteroidsHolder.prototype.spawnAsteroids = function(){
     }else{
       asteroid = new Asteroid();
     }
-    console.log(asteroid);
     asteroid.angle = - (i*0.1);
     asteroid.jarak = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
     asteroid.mesh.position.y = -game.seaRadius + Math.sin(asteroid.angle)*asteroid.jarak;
