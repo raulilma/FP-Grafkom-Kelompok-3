@@ -981,7 +981,6 @@ class Base {
 }
 function createPlane(){
   rocket = new Rocket();
-  console.log(rocket);
   rocket.mesh.scale.set(.05,.05,.05);
   // rocket.mesh.position.y = -40;
   rocket.base.rotation.x = 1.6;
@@ -1025,7 +1024,6 @@ function createAsteroids(){
   for (var i=0; i<10; i++){
     var asteroid = new Asteroid();
     poolAsteroid.push(asteroid);
-    console.log(poolAsteroid);
   }
   asteroidsHolder = new AsteroidsHolder();
   scene.add(asteroidsHolder.mesh)
