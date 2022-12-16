@@ -22,7 +22,7 @@ var game;
 var deltaTime = 0;
 var newTime = new Date().getTime();
 var oldTime = new Date().getTime();
-var poolAsteroid = [];
+var poolAsteroid = [], poolScaler = [];
 var particlesPool = [];
 var particlesInUse = [];
 
@@ -90,7 +90,7 @@ function resetGame(){
           scalerValue:10,
           scalersSpeed:.6,
           scalerLastSpawn:0,
-          jarakForAsteroidsSpawn:50,
+          jarakForScalersSpawn:233,
 
           status : "playing",
          };
@@ -325,28 +325,17 @@ Sea = function(){
 	var geom = new THREE.CylinderGeometry(600,600,800,40,10);
 	geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 
-	// important: by merging vertices we ensure the continuity of the waves
 	geom.mergeVertices();
-
-	// get the vertices
 	var l = geom.vertices.length;
-
-	// create an array to store new data associated to each vertex
 	this.waves = [];
 
 	for (var i=0; i<l; i++){
-		// get each vertex
 		var v = geom.vertices[i];
-
-		// store some data associated to it
 		this.waves.push({y:v.y,
 										 x:v.x,
 										 z:v.z,
-										 // a random angle
 										 ang:Math.random()*Math.PI*2,
-										 // a random jarak
 										 amp:5 + Math.random()*15,
-										 // a random speed between 0.016 and 0.048 radians / frame
 										 speed:0.016 + Math.random()*0.032
 										});
 	};
@@ -356,42 +345,22 @@ Sea = function(){
 		opacity:.8,
 		shading:THREE.FlatShading,
 	});
-
 	this.mesh = new THREE.Mesh(geom, mat);
 	this.mesh.receiveShadow = true;
-
 }
 
-// now we create the function that will be called in each frame 
-// to update the position of the vertices to simulate the waves
 
 Sea.prototype.moveWaves = function (){
-	
-	// get the vertices
 	var verts = this.mesh.geometry.vertices;
 	var l = verts.length;
-	
 	for (var i=0; i<l; i++){
 		var v = verts[i];
-		
-		// get the data associated to it
 		var vprops = this.waves[i];
-		
-		// update the position of the vertex
 		v.x = vprops.x + Math.cos(vprops.ang)*vprops.amp;
 		v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
-
-		// increment the angle for the next frame
 		vprops.ang += vprops.speed;
-
 	}
-
-	// Tell the renderer that the geometry of the sea has changed.
-	// In fact, in order to maintain the best bestscore of performance, 
-	// three.js caches the geometries and ignores any changes
-	// unless we add this line
 	this.mesh.geometry.verticesNeedUpdate=true;
-
 	sea.mesh.rotation.z += .005;
 }
 
@@ -434,12 +403,9 @@ Sea = function(){
   geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
   geom.mergeVertices();
   var l = geom.vertices.length;
-
   this.waves = [];
-
   for (var i=0;i<l;i++){
     var v = geom.vertices[i];
-    //v.y = Math.random()*30;
     this.waves.push({y:v.y,
                      x:v.x,
                      z:v.z,
@@ -453,13 +419,10 @@ Sea = function(){
     transparent:true,
     opacity:.8,
     shading:THREE.FlatShading,
-
   });
-
   this.mesh = new THREE.Mesh(geom, mat);
   this.mesh.name = "waves";
   this.mesh.receiveShadow = true;
-
 }
 
 Sea.prototype.moveWaves = function (){
@@ -481,7 +444,6 @@ Cloud = function(){
   var geom = new THREE.CubeGeometry(20,20,20);
   var mat = new THREE.MeshPhongMaterial({
     color:Colors.white,
-
   });
 
   //*
@@ -513,34 +475,47 @@ Cloud.prototype.rotate = function(){
 }
 
 Scaler = function(){
-  const loader = new THREE.FontLoader();
-  loader.load('../fonts/codropsicons_Regular.json', function (font) {
-    const lorem = 'X2'
-    const geometry = new THREE.TextGeometry(lorem, {
-        font: font,
-        size: 4,
-        height: 1,
-        curveSegments: 10,
-        bevelEnabled: false,
-        bevelOffset: 0,
-        bevelSegments: 1,
-        bevelSize: 0.3,
-        bevelThickness: 1
-    });
-    const materials = [
-        new THREE.MeshPhongMaterial({ color: 0xffffff }), // front
-        new THREE.MeshPhongMaterial({ color: 0x999999 }) // side
-    ];
-    this.mesh = new THREE.Mesh(geometry, materials);
-    this.mesh.castShadow = true;
-    this.angle = 0;
-    this.skor = 0;
-    this.mesh.castShadow = true;
-    this.mesh.position.z = -50;
-    this.mesh.position.y = -10;
-    this.mesh.position.x = -35;
-    this.mesh.rotation.x = - Math.PI / 4;
+  var geom = new THREE.TetrahedronGeometry(8,2);
+  var mat = new THREE.MeshPhongMaterial({
+    color:Colors.blue,
+    shininess:0,
+    specular:0xffffff,
+    shading:THREE.FlatShading
   });
+  this.mesh = new THREE.Mesh(geom,mat);
+  this.mesh.castShadow = true;
+  this.angle = 0;
+  this.skor = 0;
+  // const loader = new THREE.FontLoader();
+  // loader.load('../fonts/codropsicons_Regular.json', function (font) {
+  //   const geometry = new THREE.TextGeometry('AYAM', {
+  //       font: font,
+  //       size: 80,
+  //       height: 2,
+  //       height: 5,
+  //       curveSegments: 12,
+  //       bevelEnabled: true,
+  //       bevelThickness: 10,
+  //       bevelSize: 8,
+  //       bevelOffset: 0,
+  //       bevelSegments: 5
+  //   });
+  //   // const materials = [
+  //   //     new THREE.MeshPhongMaterial({ color: 0xffffff }), // front
+  //   //     new THREE.MeshPhongMaterial({ color: 0x999999 }) // side
+  //   // ];
+  //   const material = new THREE.MeshBasicMaterial({color: 'red'});
+  //   this.mesh = new THREE.Mesh(geometry, material);
+  //   console.log(this.mesh);
+  //   console.log("anj");
+  //   this.angle = 0;
+  //   this.skor = 0;
+  //   this.mesh.castShadow = true;
+  //   // this.mesh.position.z = -50;
+  //   // this.mesh.position.y = -10;
+  //   // this.mesh.position.x = -35;
+  //   // this.mesh.rotation.x = - Math.PI / 4;
+  // });
 }
 
 ScalersHolder = function (){
@@ -556,9 +531,10 @@ ScalersHolder.prototype.spawnScalers = function(){
     if (poolScaler.length) {
       scaler = poolScaler.pop();
     }else{
-      scaler = new Asteroid();
+      scaler = new Scaler();
     }
 
+    console.log(scaler);
     scaler.angle = - (i*0.1);
     scaler.jarak = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
     scaler.mesh.position.y = -game.seaRadius + Math.sin(scaler.angle)*scaler.jarak;
@@ -581,7 +557,6 @@ ScalersHolder.prototype.rotateScalers = function(){
     scaler.mesh.rotation.z += Math.random()*.1;
     scaler.mesh.rotation.y += Math.random()*.1;
 
-    //var globalAsteroidPosition =  scaler.mesh.localToWorld(new THREE.Vector3());
     var diffPos = rocket.mesh.position.clone().sub(scaler.mesh.position.clone());
     var d = diffPos.length();
     if (d<game.scalerjarakTolerance){
@@ -593,7 +568,7 @@ ScalersHolder.prototype.rotateScalers = function(){
       game.planeCollisionSpeedY = 100 * diffPos.y / d;
       ambientLight.intensity = 2;
 
-      removehealth();
+      multiplySize();
       i--;
     }else if (scaler.angle > Math.PI){
       poolScaler.unshift(this.scalersInUse.splice(i,1)[0]);
@@ -632,7 +607,7 @@ AsteroidsHolder.prototype.spawnAsteroids = function(){
     }else{
       asteroid = new Asteroid();
     }
-
+    console.log(asteroid);
     asteroid.angle = - (i*0.1);
     asteroid.jarak = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
     asteroid.mesh.position.y = -game.seaRadius + Math.sin(asteroid.angle)*asteroid.jarak;
@@ -1007,7 +982,8 @@ class Base {
 }
 function createPlane(){
   rocket = new Rocket();
-  rocket.mesh.scale.set(.15,.15,.15);
+  console.log(rocket);
+  rocket.mesh.scale.set(.05,.05,.05);
   // rocket.mesh.position.y = -40;
   rocket.mesh.rotation.x = 180;
   rocket.mesh.rotation.y = 1.5;
@@ -1033,13 +1009,22 @@ function createCoins(){
   scene.add(coinsHolder.mesh)
 }
 
+function createScalers(){
+  for (var i=0; i<10; i++){
+    var scaler = new Scaler();
+    poolScaler.push(scaler);
+  }
+  scalersHolder = new ScalersHolder();
+  scene.add(scalersHolder.mesh)
+}
+
 function createAsteroids(){
   for (var i=0; i<10; i++){
     var asteroid = new Asteroid();
     poolAsteroid.push(asteroid);
+    console.log(poolAsteroid);
   }
   asteroidsHolder = new AsteroidsHolder();
-  //asteroidsHolder.mesh.position.y = -game.seaRadius;
   scene.add(asteroidsHolder.mesh)
 }
 
@@ -1049,7 +1034,6 @@ function createParticles(){
     particlesPool.push(particle);
   }
   particlesHolder = new ParticlesHolder();
-  //asteroidsHolder.mesh.position.y = -game.seaRadius;
   scene.add(particlesHolder.mesh)
 }
 
@@ -1072,6 +1056,10 @@ function loop(){
       game.targetBaseSpeed += game.incrementSpeedByTime*deltaTime;
     }
 
+    if (Math.floor(game.jarak)%game.jarakForScalersSpawn == 0 && Math.floor(game.jarak) > game.scalerLastSpawn){
+      game.scalerLastSpawn = Math.floor(game.jarak);
+      scalersHolder.spawnScalers();
+    }
 
     if (Math.floor(game.jarak)%game.jarakForAsteroidsSpawn == 0 && Math.floor(game.jarak) > game.asteroidLastSpawn){
       game.asteroidLastSpawn = Math.floor(game.jarak);
@@ -1119,6 +1107,7 @@ function loop(){
 
   coinsHolder.rotateCoins();
   asteroidsHolder.rotateAsteroids();
+  scalersHolder.rotateScalers();
 
   // sky.moveClouds();
   sea.moveWaves();
@@ -1145,6 +1134,12 @@ function addscore(){
 function addhealth(){
   game.health += game.coinValue;
   game.health = Math.min(game.health, 100);
+}
+
+function multiplySize(){
+  rocket.mesh.scale.x *= 2;
+  rocket.mesh.scale.y *= 2;
+  rocket.mesh.scale.z *= 2;
 }
 
 function removehealth(){
@@ -1228,6 +1223,7 @@ function init(event){
   createSea();
   createSky();
   createCoins();
+  createScalers();
   createAsteroids();
   createParticles();
 
