@@ -12,7 +12,7 @@
 		<script type="text/javascript" src="assets/js/index.js"></script>
 		<script type="text/javascript" src="assets/js/TweenMax.min.js"></script>
 	</head>
-	<body>
+	<body id="home" style="display: none">
 		<div class="game-holder" id="gameHolder">
 			<div class="world" id="world"></div>
 			<div class="header">
@@ -21,7 +21,7 @@
 				<div class="score" id="score">
 					<div class="score__content" id="bestscore">
 						<div class="score__label">Best Score</div>
-						<div class="score__value score__value--bestscore" id="bestscoreValue">1</div>
+						<div class="score__value score__value--bestscore" id="bestscoreValue">-</div>
 					</div>
 					<div class="score__content" id="skor">
 						<div class="score__label">score</div>
@@ -39,4 +39,38 @@
 			<div class="message message--instructions" id="instructions">Ambil bintang sebanyak-banyaknya<span>hindari asteroid!</span></div>
 		</div>
 	</body>
+    <script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    <script>
+		var bestScorePlayer = 0;
+      // Sistem Leaderboard Rendora
+      function fetchDataRendora() {
+			firebase.auth().onAuthStateChanged(function (user) {
+				if (user) {
+					if (user.emailVerified) {
+						document.getElementById("home").style.display = "block";
+						firebase
+						.database()
+						.ref("Players/"+user.uid)
+						.once("value")
+						.then(function (snapshot){
+							if (snapshot.val() != null){
+								let playerData = snapshot.val();
+								bestScorePlayer = playerData.BestScore
+								document.getElementById("bestscoreValue").innerHTML = bestScorePlayer;
+							}
+						});  
+					} else {
+						alert("Email Anda belum terverifikasi. Cek email Anda, jika tidak ada di main cek spam!");
+					}
+				} else {
+					window.location.href = "/views/main-menu.html";
+				}
+			});
+      }
+      window.onload = fetchDataRendora();
+    </script>
 </html>
