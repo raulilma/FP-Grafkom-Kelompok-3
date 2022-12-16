@@ -11,7 +11,7 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!-- CSS -->
     <link rel="stylesheet" href="../assets/css/onboarding.css">
-    
+
 <body>
     <section id="container" class="container">
         <!-- Section Login -->
@@ -33,10 +33,10 @@
                         <div class="modal-body text-center">
                             <form>
                                 <div class="form-outline mb-4">
-                                    <input type="email" id="form2Example1" class="form-control" placeholder="Email" />
+                                    <input type="email" id="email" class="form-control" placeholder="Email" />
                                 </div>
                                 <div class="form-outline mb-2">
-                                    <input type="password" id="form2Example2" class="form-control"
+                                    <input type="password" id="password" class="form-control"
                                         placeholder="Password" />
                                     <p><a href="#!" class="sign-up text-end" data-bs-toggle="modal"
                                             data-bs-target="#exampleModal2" data-bs-whatever="@mdo">Don’t have account?
@@ -63,20 +63,20 @@
                         <div class="modal-body text-center">
                             <form>
                                 <div class="form-outline mb-4">
-                                    <input type="username" id="form2Example1" class="form-control"
+                                    <input type="text" id="username" class="form-control"
                                         placeholder="Username" />
                                 </div>
                                 <div class="form-outline mb-4">
-                                    <input type="name" id="form2Example1" class="form-control" placeholder="Name" />
+                                    <input type="text" id="namalengkap" class="form-control" placeholder="Name" />
                                 </div>
                                 <div class="form-outline mb-4">
-                                    <input type="email" id="form2Example1" class="form-control" placeholder="Email" />
+                                    <input type="text" id="email_reg" class="form-control" placeholder="Email" />
                                 </div>
                                 <div class="form-outline mb-4">
-                                    <input type="password" id="form2Example2" class="form-control"
+                                    <input type="password" id="password_reg" class="form-control"
                                         placeholder="Password" />
                                 </div>
-                                <button type="button"
+                                <button type="button" onclick="register()" 
                                     class="btn-login mb-4 text-center float-md-none align-middle w-50">Sign
                                     Up</button>
                             </form>
@@ -115,16 +115,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     <script src="../assets/js/firebase.js"></script>
-    <script>
+    <!-- <script>
       function checkSession() {
         firebase.auth().onAuthStateChanged(function (user) {
           if (user) {
-            window.location.href = "/onboarding.html";
+            window.location.href = "/views/onboarding.html";
           }
         });
       }
       window.onload = checkSession();
-    </script>
+    </script> -->
 </body>
 
 </html>
