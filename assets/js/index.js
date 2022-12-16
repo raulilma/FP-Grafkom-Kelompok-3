@@ -37,6 +37,7 @@ function resetGame(){
           jarakForSpeedUpdate:100,
           speedLastUpdate:0,
 
+          bestscore:-10000000,
           score:0,
           jarak:0,
           ratioSpeedjarak:50,
@@ -95,7 +96,6 @@ function resetGame(){
 
           status : "playing",
          };
-  // fieldlevel.innerHTML = Math.floor(game.level);
 }
 var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, renderer, container;
 
@@ -726,8 +726,8 @@ StarsHolder = function (nStars){
   this.starsInUse = [];
   this.starsPool = [];
   for (var i=0; i<nStars; i++){
-    var coin = new Coin();
-    this.starsPool.push(coin);
+    var star = new Coin();
+    this.starsPool.push(star);
   }
 }
 
@@ -737,45 +737,45 @@ StarsHolder.prototype.spawnStars = function(){
   var d = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
   var amplitude = 10 + Math.round(Math.random()*10);
   for (var i=0; i<nStars; i++){
-    var coin;
+    var star;
     if (this.starsPool.length) {
-      coin = this.starsPool.pop();
+      star = this.starsPool.pop();
     }else{
-      coin = new Coin();
+      star = new Coin();
     }
-    this.mesh.add(coin.mesh);
-    this.starsInUse.push(coin);
-    coin.angle = - (i*0.02);
-    coin.jarak = d + Math.cos(i*.5)*amplitude;
-    coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle)*coin.jarak;
-    coin.mesh.position.x = Math.cos(coin.angle)*coin.jarak;
+    this.mesh.add(star.mesh);
+    this.starsInUse.push(star);
+    star.angle = - (i*0.02);
+    star.jarak = d + Math.cos(i*.5)*amplitude;
+    star.mesh.position.y = -game.seaRadius + Math.sin(star.angle)*star.jarak;
+    star.mesh.position.x = Math.cos(star.angle)*star.jarak;
   }
 }
 
 StarsHolder.prototype.rotateStars = function(){
   for (var i=0; i<this.starsInUse.length; i++){
-    var coin = this.starsInUse[i];
-    if (coin.exploding) continue;
-    coin.angle += game.speed*deltaTime*game.starsSpeed;
-    if (coin.angle>Math.PI*2) coin.angle -= Math.PI*2;
-    coin.mesh.position.y = -game.seaRadius + Math.sin(coin.angle)*coin.jarak;
-    coin.mesh.position.x = Math.cos(coin.angle)*coin.jarak;
-    coin.mesh.rotation.z += Math.random()*.1;
-    coin.mesh.rotation.y += Math.random()*.1;
+    var star = this.starsInUse[i];
+    if (star.exploding) continue;
+    star.angle += game.speed*deltaTime*game.starsSpeed;
+    if (star.angle>Math.PI*2) star.angle -= Math.PI*2;
+    star.mesh.position.y = -game.seaRadius + Math.sin(star.angle)*star.jarak;
+    star.mesh.position.x = Math.cos(star.angle)*star.jarak;
+    star.mesh.rotation.z += Math.random()*.1;
+    star.mesh.rotation.y += Math.random()*.1;
 
-    //var globalCoinPosition =  coin.mesh.localToWorld(new THREE.Vector3());
-    var diffPos = rocket.mesh.position.clone().sub(coin.mesh.position.clone());
+    //var globalCoinPosition =  star.mesh.localToWorld(new THREE.Vector3());
+    var diffPos = rocket.mesh.position.clone().sub(star.mesh.position.clone());
     var d = diffPos.length();
     if (d<game.coinjarakTolerance){
       this.starsPool.unshift(this.starsInUse.splice(i,1)[0]);
-      this.mesh.remove(coin.mesh);
-      particlesHolder.spawnParticles(coin.mesh.position.clone(), 5, 0x009999, .8);
+      this.mesh.remove(star.mesh);
+      particlesHolder.spawnParticles(star.mesh.position.clone(), 5, 0x009999, .8);
       addscore();
       // addhealth();
       i--;
-    }else if (coin.angle > Math.PI){
+    }else if (star.angle > Math.PI){
       this.starsPool.unshift(this.starsInUse.splice(i,1)[0]);
-      this.mesh.remove(coin.mesh);
+      this.mesh.remove(star.mesh);
       i--;
     }
   }
@@ -1071,6 +1071,10 @@ function loop(){
       asteroidsHolder.spawnAsteroids();
     }
 
+    if (game.score > game.bestscore){
+      game.bestscore = game.score;
+      fieldbestscore.innerHTML = game.score;
+    }
     if (Math.floor(game.jarak)%game.jarakForlevelUpdate == 0 && Math.floor(game.jarak) > game.levelLastUpdate){
       game.levelLastUpdate = Math.floor(game.jarak);
       game.level++;
@@ -1133,12 +1137,18 @@ function updatehealth(){
 
 function addscore(){
   game.score += game.coinValue;
-  game.score = Math.min(game.score, 100);
+  game.score = Math.min(game.score, 10000000000000000);
   fieldscore.innerHTML = Math.floor(game.score);
+  if(game.score > game.bestscore)
+  {
+    game.bestscore = game.score;
+    fieldbestscore.innerHTML = Math.floor(game.score);
+    updateBestScore();
+  }
 }
 function addhealth(){
   game.health += game.coinValue;
-  game.health = Math.min(game.health, 100);
+  game.health = Math.min(game.health, 10000000000000000);
 }
 
 function multiplySize(){
@@ -1211,10 +1221,11 @@ function normalize(v,vmin,vmax,tmin, tmax){
   return tv;
 }
 
-var fieldscore, healthBar, replayMessage, fieldlevel;
+var fieldscore, fieldbestscore, healthBar, replayMessage, fieldlevel;
 
 function init(event){
   // UI
+  fieldbestscore = document.getElementById("bestscoreValue");
   fieldscore = document.getElementById("skorValue");
   healthBar = document.getElementById("healthBar");
   replayMessage = document.getElementById("replayMessage");
