@@ -16,9 +16,11 @@
     <section id="container" class="container">
         <!-- Section Login -->
         <div class="row">
-            <div class="login col-12">
-                <button type="button" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
+            <div class="login col-6">
+                <button type="button" id="username" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" data-bs-whatever="@mdo">Nur</button>
+                    <button type="button" onclick="logout()" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal" data-bs-whatever="@mdo">Logout</button>
             </div>
         </div>
         <!-- Section Text -->
@@ -56,6 +58,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
         integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="../assets/js/firebase.js"></script>
+    <script>
+        // Sistem Leaderboard Rendora
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                if (!user.emailVerified) {
+                    alert("Akun Anda belum terverifikasi. Cek email Anda!");
+                }
+                firebase
+                .database()
+                .ref("Players/" + user.uid)
+                .once("value")
+                .then(function (snapshot) {
+                    if (snapshot.val() != null) {
+                        var username = snapshot.val().username;
+                        document.getElementById("username").innerHTML = username;
+                    }
+                });
+            } else {
+                window.location.href = "onboarding.html";
+            }
+        });
+        window.onload = fetchLeaderboard();
+    </script>
 </body>
 
 </html>

@@ -17,7 +17,7 @@
         <!-- Section Login -->
         <div class="row">
             <div class="login col-12">
-                <button type="button" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
+                <button type="button" id="loginButton" class="btn btn-outline-light float-right text-end" data-bs-toggle="modal"
                     data-bs-target="#exampleModal" data-bs-whatever="@mdo">Login</button>
             </div>
             <!-- Modal Login -->
@@ -42,7 +42,7 @@
                                             data-bs-target="#exampleModal2" data-bs-whatever="@mdo">Don’t have account?
                                             Sign Up!</a></p>
                                 </div>
-                                <button type="button"
+                                <button type="button" onclick="login()"
                                     class="btn-login mb-4 text-center float-md-none align-middle w-50">Log
                                     In</button>
                             </form>
@@ -115,16 +115,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     <script src="../assets/js/firebase.js"></script>
-    <!-- <script>
+    <script>
       function checkSession() {
-        firebase.auth().onAuthStateChanged(function (user) {
-          if (user) {
-            window.location.href = "/views/onboarding.html";
-          }
-        });
-      }
+          firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                document.getElementById("loginButton").remove();
+            }
+          });
+        }
       window.onload = checkSession();
-    </script> -->
+    </script>
 </body>
 
 </html>

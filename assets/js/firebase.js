@@ -90,7 +90,7 @@ function login() {
       validate_email(email) == false ||
       validate_password(password) == false
   ) {
-      alert("Email or Password is Outta Line!!");
+      alert("Cek lagi email maupun password Anda!");
       return;
   }
 
@@ -102,7 +102,8 @@ function login() {
               LastLogin: Date.now(),
           };
           database_ref.child("Players/" + user.uid).update(user_data);
-          window.location.href = "onboarding.html";
+          alert("Berhasil login!");
+          window.location.href = "/views/onboarding.html";
       })
       .catch(function (error) {
           var error_message = error.message;
