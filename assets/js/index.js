@@ -259,6 +259,37 @@ Sea = function(){
 	this.mesh.receiveShadow = true;
 }
 
+var textureURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/lroc_color_poles_1k.jpg"; 
+var displacementURL = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/17271/ldem_3_8bit.jpg";
+var textureLoader = new THREE.TextureLoader();
+var texture = textureLoader.load( textureURL );
+var displacementMap = textureLoader.load( displacementURL );
+
+Moon = function(){
+	var geom = new THREE.SphereGeometry(600,600,800,40,10);
+	geom.applyMatrix(new THREE.Matrix4().makeRotationY(-Math.PI/2));
+
+	geom.mergeVertices();
+	var l = geom.vertices.length;
+	this.waves = [];
+
+	for (var i=0; i<l; i++){
+		var v = geom.vertices[i];
+	};
+	var mat = new THREE.MeshPhongMaterial( 
+    { color: 0xffffff ,
+      map: texture ,
+      displacementMap: displacementMap,
+      displacementScale: 0.06,
+      bumpMap: displacementMap,
+      bumpScale: 0.04,
+      reflectivity:0, 
+      shininess :0
+    } );
+	this.mesh = new THREE.Mesh(geom, mat);
+	this.mesh.receiveShadow = true;
+}
+
 
 Sea.prototype.moveWaves = function (){
 	var verts = this.mesh.geometry.vertices;
@@ -278,6 +309,12 @@ function createSea(){
 	sea = new Sea();
 	sea.mesh.position.y = -600;
 	scene.add(sea.mesh);
+}
+
+function createMoon(){
+  moon = new Moon();
+  moon.mesh.position.y = -600;
+  scene.add(moon.mesh);
 }
 
 function createSky(){
@@ -1019,9 +1056,18 @@ function loop(){
   }
 
   sky.mesh.rotation.z += .001;
-  sea.mesh.rotation.z += game.speed*deltaTime;
 
-  if ( sea.mesh.rotation.z > 2*Math.PI)  sea.mesh.rotation.z -= 2*Math.PI;
+  //enable this for sea rotation
+  // sea.mesh.rotation.z += game.speed*deltaTime;
+
+  //enable this for moon rotation
+  moon.mesh.rotation.z += game.speed*deltaTime;
+
+  //enable this for sea rotation
+  // if ( sea.mesh.rotation.z > 2*Math.PI)  sea.mesh.rotation.z -= 2*Math.PI;
+
+  //enable this for moon rotation
+  if ( moon.mesh.rotation.z > 2*Math.PI)  moon.mesh.rotation.z -= 2*Math.PI;
 
   ambientLight.intensity += (.5 - ambientLight.intensity)*deltaTime*0.005;
 
@@ -1029,7 +1075,7 @@ function loop(){
   asteroidsHolder.rotateAsteroids();
   scalersHolder.rotateScalers();
 
-  sea.moveWaves();
+  // sea.moveWaves();
 
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
@@ -1252,7 +1298,8 @@ function init(event){
 
   createLights();
   createRocket();
-  createSea();
+  // createSea();
+  createMoon();
   createSky();
   createStars();
   createScalers();
