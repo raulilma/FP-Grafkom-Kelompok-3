@@ -70,7 +70,7 @@ function register() {
       user.sendEmailVerification()
       .then(function () {
           alert(
-              "Link verifikasi sudah terkirim di emailmu. Klik link tersebut untuk dapat mengakses Rendora!"
+              "Link verifikasi sudah terkirim di emailmu, jika tidak ada di main cek spam!. Klik link tersebut untuk dapat mengakses Rendora!"
           );
       })
       .catch(function (error) {
