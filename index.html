@@ -7,13 +7,14 @@
 		<title>Rendora | FP Kelompok 3</title>
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
 		<link rel="stylesheet" type="text/css" href="assets/css/game.css" />
+		<link rel="stylesheet" type="text/css" href="assets/css/demo.css" />
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.min.js"></script>
 		<script type="text/javascript" src="https://rawgit.com/chandlerprall/ThreeCSG/master/ThreeCSG.js"></script>
 		<script type="text/javascript" src="assets/js/index.js"></script>
 		<script type="text/javascript" src="assets/js/TweenMax.min.js"></script>
 	</head>
-	<body id="home" style="display: none">
-		<div class="game-holder" id="gameHolder">
+	<body>
+		<div class="game-holder" id="gameHolder" style="display: none">
 			<div class="world" id="world"></div>
 			<div class="header">
 				<img src="assets/img/textRendora.svg" alt="text-rendora" width="200" height="">
@@ -38,6 +39,13 @@
 			<div class="message message--replay" id="replayMessage">Klik untuk Mengulang!</div>
 			<div class="message message--instructions" id="instructions">Ambil bintang untuk skor dan scaler (biru) untuk memperbesar roket<span>hindari asteroid!</span></div>
 		</div>
+		<!-- Demo links -->
+		<nav class="meta">
+			<a class="codrops-icon codrops-icon--prev" href="views/main-menu.html" title="Main Menu"><span>Main Menu</span></a>
+			<a class="codrops-icon codrops-icon--drop" href="views/leaderboard.html" title="Leaderboard"><span>Leaderboard</span></a>
+			<a class="demo-link" href="views/onboarding.html">Login</a>
+			<a class="demo-link" href="views/credits.html">Credits</a>
+		</nav>
 	</body>
     <script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -51,7 +59,7 @@
 			firebase.auth().onAuthStateChanged(function (user) {
 				if (user) {
 					if (user.emailVerified) {
-						document.getElementById("home").style.display = "block";
+						document.getElementById("gameHolder").style.display = "block";
 						firebase
 						.database()
 						.ref("Players/"+user.uid)
@@ -69,7 +77,8 @@
 						alert("Email Anda belum terverifikasi. Cek email Anda, jika tidak ada di main cek spam!");
 					}
 				} else {
-					window.location.href = "/views/main-menu.html";
+					alert("Anda belum terautentikasi dalam sistem. Silakan login terlebih dahulu!");
+					// window.location.href = "/views/main-menu.html";
 				}
 			});
       }
