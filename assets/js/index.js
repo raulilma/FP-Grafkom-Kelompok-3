@@ -27,6 +27,7 @@ var poolAsteroid = [], poolScaler = [];
 var particlesPool = [];
 var particlesInUse = [];
 
+var bestScoreVal = 0;
 function resetGame(){
   game = {speed:0,
           initSpeed:.00035,
@@ -37,7 +38,7 @@ function resetGame(){
           jarakForSpeedUpdate:100,
           speedLastUpdate:0,
 
-          bestscore:-10000000,
+          bestscore:bestScoreVal,
           score:0,
           jarak:0,
           ratioSpeedjarak:50,
@@ -1069,6 +1070,7 @@ function loop(){
 
     if (game.score > game.bestscore){
       game.bestscore = game.score;
+      bestScoreVal = game.bestscore;
       fieldbestscore.innerHTML = game.score;
     }
     if (Math.floor(game.jarak)%game.jarakForlevelUpdate == 0 && Math.floor(game.jarak) > game.levelLastUpdate){
