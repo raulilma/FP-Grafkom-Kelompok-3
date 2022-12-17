@@ -5,7 +5,12 @@ body{
     background-size: cover;
     font-family: 'Poppins', sans-serif;
 }
-
+.row{
+    margin-right: 0;
+}
 .back{
     cursor: pointer;
+}
+#container{
+    padding-bottom: 10vh;
 }
