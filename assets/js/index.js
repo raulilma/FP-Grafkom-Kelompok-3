@@ -49,21 +49,21 @@ function resetGame(){
           levelLastUpdate:0,
           jarakForlevelUpdate:1000,
 
-          planeDefaultHeight:100,
-          planeAmpHeight:80,
-          planeAmpWidth:75,
-          planeMoveSensivity:0.005,
-          planeRotXSensivity:0.0008,
-          planeRotZSensivity:0.0004,
-          planeFallSpeed:.001,
-          planeMinSpeed:1.2,
-          planeMaxSpeed:1.6,
-          planeSpeed:0,
-          planeCollisionDisplacementX:0,
-          planeCollisionSpeedX:0,
+          rocketDefaultHeight:100,
+          rocketAmpHeight:80,
+          rocketAmpWidth:75,
+          rocketMoveSensivity:0.005,
+          rocketRotXSensivity:0.0008,
+          rocketRotZSensivity:0.0004,
+          rocketFallSpeed:.001,
+          rocketMinSpeed:1.2,
+          rocketMaxSpeed:1.6,
+          rocketSpeed:0,
+          rocketCollisionDisplacementX:0,
+          rocketCollisionSpeedX:0,
 
-          planeCollisionDisplacementY:0,
-          planeCollisionSpeedY:0,
+          rocketCollisionDisplacementY:0,
+          rocketCollisionSpeedY:0,
 
           seaRadius:600,
           seaLength:800,
@@ -98,7 +98,7 @@ function resetGame(){
           status : "playing",
          };
 }
-var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, renderer, container;
+var scene, camera, fieldOfView, aspectRatio, nearRocket, farRocket, renderer, container;
 
 var HEIGHT, WIDTH, mousePos = { x: 0, y: 0 };
 
@@ -110,13 +110,13 @@ function createScene() {
   scene = new THREE.Scene();
   aspectRatio = WIDTH / HEIGHT;
   fieldOfView = 60;
-  nearPlane = 1;
-  farPlane = 10000;
+  nearRocket = 1;
+  farRocket = 10000;
   camera = new THREE.PerspectiveCamera(
     fieldOfView,
     aspectRatio,
-    nearPlane,
-    farPlane
+    nearRocket,
+    farRocket
     );
   scene.fog = new THREE.Fog(0xffff, 200,950);
   camera.position.x = 0;
@@ -157,6 +157,7 @@ function handleMouseUp(event){
   if (game.status == "waitingReplay"){
     resetGame();
     hideReplay();
+    rocket.mesh.scale.set(.05,.05,.05);
   }
 }
 
@@ -189,99 +190,6 @@ function createLights() {
   scene.add(ambientLight);
   scene.add(hemisphereLight);
   scene.add(shadowLight);
-}
-
-var Pilot = function(){
-	this.mesh = new THREE.Object3D();
-	this.mesh.name = "pilot";
-	
-	// angleHairs is a property used to animate the hair later 
-	this.angleHairs=0;
-
-	// Body of the pilot
-	var bodyGeom = new THREE.BoxGeometry(15,15,15);
-	var bodyMat = new THREE.MeshPhongMaterial({color:Colors.brown, shading:THREE.FlatShading});
-	var body = new THREE.Mesh(bodyGeom, bodyMat);
-	body.position.set(2,-12,0);
-	this.mesh.add(body);
-
-	// Face of the pilot
-	var faceGeom = new THREE.BoxGeometry(10,10,10);
-	var faceMat = new THREE.MeshLambertMaterial({color:Colors.pink});
-	var face = new THREE.Mesh(faceGeom, faceMat);
-	this.mesh.add(face);
-
-	// Hair element
-	var hairGeom = new THREE.BoxGeometry(4,4,4);
-	var hairMat = new THREE.MeshLambertMaterial({color:Colors.brown});
-	var hair = new THREE.Mesh(hairGeom, hairMat);
-	// Align the shape of the hair to its bottom boundary, that will make it easier to scale.
-	hair.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,2,0));
-	
-	// create a container for the hair
-	var hairs = new THREE.Object3D();
-
-	this.hairsTop = new THREE.Object3D();
-	for (var i=0; i<12; i++){
-		var h = hair.clone();
-		var col = i%3;
-		var row = Math.floor(i/3);
-		var startPosZ = -4;
-		var startPosX = -4;
-		h.position.set(startPosX + row*4, 0, startPosZ + col*4);
-		this.hairsTop.add(h);
-	}
-	hairs.add(this.hairsTop);
-
-	// create the hairs at the side of the face
-	var hairSideGeom = new THREE.BoxGeometry(12,4,2);
-	hairSideGeom.applyMatrix(new THREE.Matrix4().makeTranslation(-6,0,0));
-	var hairSideR = new THREE.Mesh(hairSideGeom, hairMat);
-	var hairSideL = hairSideR.clone();
-	hairSideR.position.set(8,-2,6);
-	hairSideL.position.set(8,-2,-6);
-	hairs.add(hairSideR);
-	hairs.add(hairSideL);
-
-	var hairBackGeom = new THREE.BoxGeometry(2,8,10);
-	var hairBack = new THREE.Mesh(hairBackGeom, hairMat);
-	hairBack.position.set(-1,-4,0)
-	hairs.add(hairBack);
-	hairs.position.set(-5,5,0);
-
-	this.mesh.add(hairs);
-
-	var glassGeom = new THREE.BoxGeometry(5,5,5);
-	var glassMat = new THREE.MeshLambertMaterial({color:Colors.brown});
-	var glassR = new THREE.Mesh(glassGeom,glassMat);
-	glassR.position.set(6,0,3);
-	var glassL = glassR.clone();
-	glassL.position.z = -glassR.position.z
-
-	var glassAGeom = new THREE.BoxGeometry(11,1,11);
-	var glassA = new THREE.Mesh(glassAGeom, glassMat);
-	this.mesh.add(glassR);
-	this.mesh.add(glassL);
-	this.mesh.add(glassA);
-
-	var earGeom = new THREE.BoxGeometry(2,3,2);
-	var earL = new THREE.Mesh(earGeom,faceMat);
-	earL.position.set(0,0,-6);
-	var earR = earL.clone();
-	earR.position.set(0,0,6);
-	this.mesh.add(earL);
-	this.mesh.add(earR);
-}
-
-// move the hair
-Pilot.prototype.updateHairs = function(){
-	var hairs = this.hairsTop.children;
-	var l = hairs.length;
-	for (var i=0; i<l; i++){
-		var h = hairs[i];
-		h.scale.y = .75 + Math.cos(this.angleHairs+i/3)*.25;
-	}
-	this.angleHairs += 0.16;
 }
 
 Sky = function(){
@@ -537,7 +445,7 @@ ScalersHolder.prototype.spawnScalers = function(){
     }
 
     scaler.angle = - (i*0.1);
-    scaler.jarak = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
+    scaler.jarak = game.seaRadius + game.rocketDefaultHeight + (-1 + Math.random() * 2) * (game.rocketAmpHeight-20);
     scaler.mesh.position.y = -game.seaRadius + Math.sin(scaler.angle)*scaler.jarak;
     scaler.mesh.position.x = Math.cos(scaler.angle)*scaler.jarak;
 
@@ -565,8 +473,8 @@ ScalersHolder.prototype.rotateScalers = function(){
 
       poolScaler.unshift(this.scalersInUse.splice(i,1)[0]);
       this.mesh.remove(scaler.mesh);
-      game.planeCollisionSpeedX = 50 * diffPos.x / d;
-      game.planeCollisionSpeedY = 50 * diffPos.y / d;
+      game.rocketCollisionSpeedX = 50 * diffPos.x / d;
+      game.rocketCollisionSpeedY = 50 * diffPos.y / d;
       ambientLight.intensity = 2;
 
       multiplySize();
@@ -609,7 +517,7 @@ AsteroidsHolder.prototype.spawnAsteroids = function(){
       asteroid = new Asteroid();
     }
     asteroid.angle = - (i*0.1);
-    asteroid.jarak = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
+    asteroid.jarak = game.seaRadius + game.rocketDefaultHeight + (-1 + Math.random() * 2) * (game.rocketAmpHeight-20);
     asteroid.mesh.position.y = -game.seaRadius + Math.sin(asteroid.angle)*asteroid.jarak;
     asteroid.mesh.position.x = Math.cos(asteroid.angle)*asteroid.jarak;
 
@@ -638,8 +546,8 @@ AsteroidsHolder.prototype.rotateAsteroids = function(){
 
       poolAsteroid.unshift(this.asteroidsInUse.splice(i,1)[0]);
       this.mesh.remove(asteroid.mesh);
-      game.planeCollisionSpeedX = 100 * diffPos.x / d;
-      game.planeCollisionSpeedY = 100 * diffPos.y / d;
+      game.rocketCollisionSpeedX = 100 * diffPos.x / d;
+      game.rocketCollisionSpeedY = 100 * diffPos.y / d;
       ambientLight.intensity = 2;
 
       removehealth();
@@ -733,7 +641,7 @@ StarsHolder = function (nStars){
 StarsHolder.prototype.spawnStars = function(){
 
   var nStars = 1 + Math.floor(Math.random()*10);
-  var d = game.seaRadius + game.planeDefaultHeight + (-1 + Math.random() * 2) * (game.planeAmpHeight-20);
+  var d = game.seaRadius + game.rocketDefaultHeight + (-1 + Math.random() * 2) * (game.rocketAmpHeight-20);
   var amplitude = 10 + Math.round(Math.random()*10);
   for (var i=0; i<nStars; i++){
     var star;
@@ -980,7 +888,7 @@ class Base {
     this.mesh.add(m);
   }
 }
-function createPlane(){
+function createRocket(){
   rocket = new Rocket();
   rocket.mesh.scale.set(.05,.05,.05);
   // rocket.mesh.position.y = -40;
@@ -990,7 +898,7 @@ function createPlane(){
   rocket.roof.rotation.x = 1.6;
   rocket.window.rotation.x = 1.6;
   rocket.mesh.rotation.y = 1.5;
-  rocket.mesh.position.y = game.planeDefaultHeight;
+  rocket.mesh.position.y = game.rocketDefaultHeight;
   scene.add(rocket.mesh);
 }
 
@@ -1082,18 +990,18 @@ function loop(){
     }
 
 
-    updatePlane();
+    updateRocket();
     updatejarak();
-    updatehealth();
     game.baseSpeed += (game.targetBaseSpeed - game.baseSpeed) * deltaTime * 0.02;
-    game.speed = game.baseSpeed * game.planeSpeed;
+    game.speed = game.baseSpeed * game.rocketSpeed;
 
   }else if(game.status=="gameover"){
     game.speed *= .99;
+    rocket.mesh.scale.set(.05,.05,.05);
     rocket.mesh.rotation.z += (-Math.PI/2 - rocket.mesh.rotation.z)*.0002*deltaTime;
     rocket.mesh.rotation.x += 0.0003*deltaTime;
-    game.planeFallSpeed *= 1.05;
-    rocket.mesh.position.y -= game.planeFallSpeed*deltaTime;
+    game.rocketFallSpeed *= 1.05;
+    rocket.mesh.position.y -= game.rocketFallSpeed*deltaTime;
 
     if (rocket.mesh.position.y <-200){
       showReplay();
@@ -1105,8 +1013,7 @@ function loop(){
   }
 
   sky.mesh.rotation.z += .001;
-  // rocket.propeller.rotation.x +=.2 + game.planeSpeed * deltaTime*.005;
-  sea.mesh.rotation.z += game.speed*deltaTime;//*game.seaRotationSpeed;
+  sea.mesh.rotation.z += game.speed*deltaTime;
 
   if ( sea.mesh.rotation.z > 2*Math.PI)  sea.mesh.rotation.z -= 2*Math.PI;
 
@@ -1116,7 +1023,6 @@ function loop(){
   asteroidsHolder.rotateAsteroids();
   scalersHolder.rotateScalers();
 
-  // sky.moveClouds();
   sea.moveWaves();
 
   renderer.render(scene, camera);
@@ -1129,10 +1035,6 @@ function updatejarak(){
 
 var blinkhealth=false;
 
-function updatehealth(){
-  
-}
-
 function addscore(){
   game.score += game.coinValue;
   game.score = Math.min(game.score, 10000000000000000);
@@ -1144,6 +1046,7 @@ function addscore(){
     updateBestScore();
   }
 }
+
 function addhealth(){
   game.health += game.coinValue;
   game.health = Math.min(game.health, 10000000000000000);
@@ -1172,34 +1075,31 @@ function removehealth(){
   }
 }
 
-function updatePlane(){
-  game.planeSpeed = normalize(mousePos.x,-.5,.5,game.planeMinSpeed, game.planeMaxSpeed);
-  var targetY = normalize(mousePos.y,-.75,.75,game.planeDefaultHeight-game.planeAmpHeight, game.planeDefaultHeight+game.planeAmpHeight);
-  var targetX = normalize(mousePos.x,-1,1,-game.planeAmpWidth*.7, -game.planeAmpWidth);
+function updateRocket(){
+  game.rocketSpeed = normalize(mousePos.x,-.5,.5,game.rocketMinSpeed, game.rocketMaxSpeed);
+  var targetY = normalize(mousePos.y,-.75,.75,game.rocketDefaultHeight-game.rocketAmpHeight, game.rocketDefaultHeight+game.rocketAmpHeight);
+  var targetX = normalize(mousePos.x,-1,1,-game.rocketAmpWidth*.7, -game.rocketAmpWidth);
 
-  game.planeCollisionDisplacementX += game.planeCollisionSpeedX;
-  targetX += game.planeCollisionDisplacementX;
+  game.rocketCollisionDisplacementX += game.rocketCollisionSpeedX;
+  targetX += game.rocketCollisionDisplacementX;
 
 
-  game.planeCollisionDisplacementY += game.planeCollisionSpeedY;
-  targetY += game.planeCollisionDisplacementY;
+  game.rocketCollisionDisplacementY += game.rocketCollisionSpeedY;
+  targetY += game.rocketCollisionDisplacementY;
 
-  rocket.mesh.position.y += (targetY-rocket.mesh.position.y)*deltaTime*game.planeMoveSensivity;
-  rocket.mesh.position.x += (targetX-rocket.mesh.position.x)*deltaTime*game.planeMoveSensivity;
+  rocket.mesh.position.y += (targetY-rocket.mesh.position.y)*deltaTime*game.rocketMoveSensivity;
+  rocket.mesh.position.x += (targetX-rocket.mesh.position.x)*deltaTime*game.rocketMoveSensivity;
 
-  rocket.mesh.rotation.z = (targetY-rocket.mesh.position.y)*deltaTime*game.planeRotXSensivity;
-  rocket.mesh.rotation.x = (rocket.mesh.position.y-targetY)*deltaTime*game.planeRotZSensivity;
-  var targetCameraZ = normalize(game.planeSpeed, game.planeMinSpeed, game.planeMaxSpeed, game.cameraNearPos, game.cameraFarPos);
+  rocket.mesh.rotation.z = (targetY-rocket.mesh.position.y)*deltaTime*game.rocketRotXSensivity;
+  rocket.mesh.rotation.x = (rocket.mesh.position.y-targetY)*deltaTime*game.rocketRotZSensivity;
   camera.fov = normalize(mousePos.x,-1,1,40, 80);
   camera.updateProjectionMatrix ()
   camera.position.y += (rocket.mesh.position.y - camera.position.y)*deltaTime*game.cameraSensivity;
 
-  game.planeCollisionSpeedX += (0-game.planeCollisionSpeedX)*deltaTime * 0.03;
-  game.planeCollisionDisplacementX += (0-game.planeCollisionDisplacementX)*deltaTime *0.01;
-  game.planeCollisionSpeedY += (0-game.planeCollisionSpeedY)*deltaTime * 0.03;
-  game.planeCollisionDisplacementY += (0-game.planeCollisionDisplacementY)*deltaTime *0.01;
-
-  // rocket.pilot.updateHairs();
+  game.rocketCollisionSpeedX += (0-game.rocketCollisionSpeedX)*deltaTime * 0.03;
+  game.rocketCollisionDisplacementX += (0-game.rocketCollisionDisplacementX)*deltaTime *0.01;
+  game.rocketCollisionSpeedY += (0-game.rocketCollisionSpeedY)*deltaTime * 0.03;
+  game.rocketCollisionDisplacementY += (0-game.rocketCollisionDisplacementY)*deltaTime *0.01;
 }
 
 function showReplay(){
@@ -1233,7 +1133,7 @@ function init(event){
   createScene();
 
   createLights();
-  createPlane();
+  createRocket();
   createSea();
   createSky();
   createStars();
