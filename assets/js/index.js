@@ -947,6 +947,9 @@ function createParticles(){
   scene.add(particlesHolder.mesh)
 }
 
+let particleArray = [],
+  slowMoFactor = 1;
+
 function loop(){
 
   newTime = new Date().getTime();
@@ -989,6 +992,9 @@ function loop(){
       game.targetBaseSpeed = game.initSpeed + game.incrementSpeedBylevel*game.level
     }
 
+    setTimeout(() => {
+      createSmoke(rocket);
+    }, 1000);
 
     updateRocket();
     updatejarak();
@@ -1028,6 +1034,118 @@ function loop(){
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
+
+//smoke particle
+const getParticle = () => {
+  let p;
+  if (particleArray.length > 0) {
+    p = particleArray.pop();
+  } else {
+    p = new SmokeParticle();
+  }
+  return p;
+};
+
+const createSmoke = (rocket) => {
+  let p = getParticle();
+  dropParticle(p, rocket);
+};
+
+const createFlyingParticles = () => {
+  let p = getParticle();
+  flyParticle(p);
+};
+
+class SmokeParticle {
+  constructor() {
+    this.isFlying = false;
+
+    var scale = 10 + Math.random() * 10;
+    var nLines = 3 + Math.floor(Math.random() * 5);
+    var nRows = 3 + Math.floor(Math.random() * 5);
+    this.geometry = new THREE.SphereGeometry(scale, nLines, nRows);
+
+    this.material = new THREE.MeshLambertMaterial({
+      color: 0xe3e3e3,
+      shading: THREE.FlatShading,
+      transparent: true
+    });
+
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    recycleParticle(this);
+  }
+}
+
+function recycleParticle(p) {
+  p.mesh.position.x = 0;
+  p.mesh.position.y = 0;
+  p.mesh.position.z = 0;
+  p.mesh.rotation.x = Math.random() * Math.PI * 2;
+  p.mesh.rotation.y = Math.random() * Math.PI * 2;
+  p.mesh.rotation.z = Math.random() * Math.PI * 2;
+  p.mesh.scale.set(0.1, 0.1, 0.1);
+  p.mesh.material.opacity = 0;
+  p.color = 0xe3e3e3;
+  p.mesh.material.color.set(p.color);
+  p.material.needUpdate = true;
+  scene.add(p.mesh);
+  particleArray.push(p);
+}
+function flyParticle(p) {
+  var targetPosX, targetPosY, targetSpeed, targetColor;
+  p.mesh.material.opacity = 1;
+  p.mesh.position.x = -1000 + Math.random() * 2000;
+  p.mesh.position.y = 100 + Math.random() * 2000;
+  p.mesh.position.z = -1000 + Math.random() * 1500;
+
+  var s = Math.random() * 0.2;
+  p.mesh.scale.set(s, s, s);
+
+  targetPosX = 0;
+  targetPosY = -p.mesh.position.y - 2500;
+  targetSpeed = 1 + Math.random() * 2;
+  targetColor = 0xe3e3e3;
+
+  TweenMax.to(p.mesh.position, targetSpeed * slowMoFactor, {
+    x: targetPosX,
+    y: targetPosY,
+    ease: Linear.easeNone,
+    onComplete: recycleParticle,
+    onCompleteParams: [p]
+  });
+}
+let cloudTargetPosX,
+cloudTargetPosY,
+cloudTargetSpeed,
+cloudTargetColor,
+cloudSlowMoFactor = 0.65;
+const dropParticle = (p, rocket) => {
+  p.mesh.material.opacity = 1;
+  p.mesh.position.x = rocket.mesh.position.x - 30;
+  p.mesh.position.y = rocket.mesh.position.y;
+  p.mesh.position.z = rocket.mesh.position.z;
+  var s = Math.random(0.2) + 0.35;
+  p.mesh.scale.set(0.4 * s, 0.4 * s, 0.4 * s);
+  cloudTargetPosX = rocket.mesh.position.x - 500;
+  cloudTargetPosY = 0;
+  cloudTargetSpeed = 0.9 + Math.random() * 0.7;
+  cloudTargetColor = 0xa3a3a3;
+
+  TweenMax.to(p.mesh.position, 1.3 * cloudTargetSpeed * cloudSlowMoFactor, {
+    x: cloudTargetPosX,
+    y: cloudTargetPosY,
+    ease: Linear.easeNone,
+    onComplete: recycleParticle,
+    onCompleteParams: [p]
+  });
+
+  TweenMax.to(p.mesh.scale, cloudTargetSpeed * cloudSlowMoFactor, {
+    x: s * 1.8,
+    y: s * 1.8,
+    z: s * 1.8,
+    ease: Linear.ease
+  });
+};
 
 function updatejarak(){
   game.jarak += game.speed*deltaTime*game.ratioSpeedjarak;
