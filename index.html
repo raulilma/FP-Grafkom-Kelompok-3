@@ -4,12 +4,92 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Rendora</title>
+		<title>Rendora: The Game</title>
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css" />
-		<script type="text/javascript" src="assets/js/three.min.js"></script>
-		<script type="text/javascript" src="assets/js/index.js"/></script>
+		<link rel="stylesheet" type="text/css" href="assets/css/game.css" />
+		<link rel="stylesheet" type="text/css" href="assets/css/demo.css" />
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.min.js"></script>
+		<script type="text/javascript" src="https://rawgit.com/chandlerprall/ThreeCSG/master/ThreeCSG.js"></script>
+		<script type="text/javascript" src="assets/js/index.js"></script>
+		<script type="text/javascript" src="assets/js/TweenMax.min.js"></script>
 	</head>
 	<body>
-		<div class="world" id="world"></div>
+		<div class="game-holder" id="gameHolder" style="display: none">
+			<div class="world" id="world"></div>
+			<div class="header">
+				<img src="assets/img/textRendora.svg" alt="text-rendora" width="200" height="">
+				<h2>Final Project Grafika Komputer A - SPR-A5</h2>
+				<div class="score" id="score">
+					<div class="score__content" id="bestscore">
+						<div class="score__label">Best Score</div>
+						<div class="score__value score__value--bestscore" id="bestscoreValue">-</div>
+					</div>
+					<div class="score__content" id="skor">
+						<div class="score__label">score</div>
+						<div class="score__value score__value--skor" id="skorValue">000</div>
+					</div>
+					<div class="score__content" id="health">
+						<div class="score__label">health</div>
+						<div class="score__value score__value--health" id="healthValue">
+							<div class="health-bar" id="healthBar"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="message message--replay" id="replayMessage">Klik untuk Mengulang!</div>
+			<div class="message message--instructions" id="instructions">Ambil bintang untuk skor dan scaler (biru) untuk memperbesar roket<span>hindari asteroid!</span></div>
+		</div>
+		<!-- Demo links -->
+		<nav class="meta">
+			<a class="codrops-icon codrops-icon--prev" href="views/main-menu.html" title="Main Menu"><span>Main Menu</span></a>
+			<a class="codrops-icon codrops-icon--drop" href="views/leaderboard.html" title="Leaderboard"><span>Leaderboard</span></a>
+			<a class="demo-link" href="views/onboarding.html">Login</a>
+			<a class="demo-link" href="views/credits.html">Credits</a>
+		</nav>
 	</body>
+    <script src="https://code.jquery.com/jquery-3.6.2.min.js" integrity="sha256-2krYZKh//PcchRtd+H+VyyQoZ/e3EcrkxhM8ycwASPA=" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="assets/js/firebase.js"></script>
+    <script>
+		var bestScorePlayer = 0;
+      // Sistem Fetching Data Rendora
+      function fetchDataRendora() {
+			firebase.auth().onAuthStateChanged(function (user) {
+				if (user) {
+					if (user.emailVerified) {
+						document.getElementById("gameHolder").style.display = "block";
+						firebase
+						.database()
+						.ref("Players/"+user.uid)
+						.once("value")
+						.then(function (snapshot){
+							if (snapshot.val() != null){
+								let playerData = snapshot.val();
+								bestScorePlayer = playerData.BestScore
+								game.bestscore = bestScorePlayer
+								bestScoreVal = bestScorePlayer
+								document.getElementById("bestscoreValue").innerHTML = bestScorePlayer;
+							}
+						});  
+					} else {
+						alert("Email Anda belum terverifikasi. Cek email Anda, jika tidak ada di main cek spam!");
+					}
+				} else {
+					alert("Anda belum terautentikasi dalam sistem. Silakan login terlebih dahulu!");
+					window.location.href = "/views/onboarding.html";
+				}
+			});
+      }
+      function updateBestScore() {
+			firebase.auth().onAuthStateChanged(function (user) {
+				if (user) {
+					// alert("Berhasil mencapai skor tertinggi terbaru: "+game.bestscore+"!")
+					firebase.database().ref("Players/"+user.uid+"/BestScore").set(game.bestscore);
+				}
+			});
+      }
+      window.onload = fetchDataRendora();
+    </script>
 </html>
