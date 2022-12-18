@@ -1242,7 +1242,7 @@ function addhealth() {
 }
 
 function multiplySize(iter) {
-    if(iter < 10) {
+    if(iter < 6) {
         rocket.mesh.scale.x *= 1.5;
         rocket.mesh.scale.y *= 1.5;
         rocket.mesh.scale.z *= 1.5;
