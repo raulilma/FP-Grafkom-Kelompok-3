@@ -24,4 +24,5 @@ body{
     background: linear-gradient(180deg, #FBA440 0%, #FD4C1E 100%);
     box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.2);
     border-radius: 12px;
+    border: none;
 }
