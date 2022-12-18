@@ -21,12 +21,15 @@ body{
 }
 /* Play */
 .tombol-play{
+    border: none;
     background: linear-gradient(180deg, #FBA440 0%, #FD4C1E 100%);
     box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.2);
     border-radius: 12px;
 }
 
 .credits{
+    border: none;
+    margin: 0 16px;
     background: linear-gradient(180deg, #5561FF 0%, #3643FC 100%, #3643FC 100%);
     box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.2);
     border-radius: 12px;
