@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/techiro1/rendora.techiro.id
+    - /bin/cp -R * $DEPLOYPATH
