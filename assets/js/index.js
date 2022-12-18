@@ -231,6 +231,20 @@ Star = function(){
   }
 }
 
+Star2 = function(){
+  var geom = new THREE.OctahedronGeometry(5, 0);
+  var mat = new THREE.MeshPhongMaterial({
+    color: 0xe6cc00,
+    shininess:0,
+    specular:0xffffff,
+    shading:THREE.FlatShading
+  });
+  this.mesh = new THREE.Mesh(geom,mat);
+  this.mesh.castShadow = true;
+  this.angle = 0;
+  this.skor = 0;
+}
+
 Sea = function(){
 	var geom = new THREE.CylinderGeometry(600,600,800,40,10);
 	geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
@@ -670,7 +684,8 @@ StarsHolder = function (nStars){
   this.starsInUse = [];
   this.starsPool = [];
   for (var i=0; i<nStars; i++){
-    var star = new Coin();
+    // var star = new Coin();
+    var star = new Star2();
     this.starsPool.push(star);
   }
 }
@@ -685,7 +700,8 @@ StarsHolder.prototype.spawnStars = function(){
     if (this.starsPool.length) {
       star = this.starsPool.pop();
     }else{
-      star = new Coin();
+      // star = new Coin();
+      star = new Star2();
     }
     this.mesh.add(star.mesh);
     this.starsInUse.push(star);
