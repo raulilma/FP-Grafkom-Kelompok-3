@@ -526,7 +526,7 @@ ScalersHolder.prototype.rotateScalers = function () {
     var diffPos = rocket.mesh.position.clone().sub(scaler.mesh.position.clone());
     var d = diffPos.length();
     if (d < game.scalerjarakTolerance) {
-      particlesHolder.spawnParticles(scaler.mesh.position.clone(), 15, Colors.blue, 3);
+      particlesHolder.spawnParticles(scaler.mesh.position.clone(), 15, 0x009999, 3);
 
       poolScaler.unshift(this.scalersInUse.splice(i, 1)[0]);
       this.mesh.remove(scaler.mesh);
@@ -739,7 +739,7 @@ StarsHolder.prototype.rotateStars = function () {
     if (d < game.coinjarakTolerance) {
       this.starsPool.unshift(this.starsInUse.splice(i, 1)[0]);
       this.mesh.remove(star.mesh);
-      particlesHolder.spawnParticles(star.mesh.position.clone(), 5, 0x009999, .8);
+      particlesHolder.spawnParticles(star.mesh.position.clone(), 5, 0xe6cc00, .8);
       addscore();
       // addhealth();
       i--;
