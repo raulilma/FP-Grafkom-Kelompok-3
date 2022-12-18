@@ -509,6 +509,8 @@ ScalersHolder.prototype.spawnScalers = function () {
   }
 }
 
+let multiplyIter = 0;
+
 ScalersHolder.prototype.rotateScalers = function () {
   for (var i = 0; i < this.scalersInUse.length; i++) {
     var scaler = this.scalersInUse[i];
@@ -532,7 +534,9 @@ ScalersHolder.prototype.rotateScalers = function () {
       game.rocketCollisionSpeedY = 50 * diffPos.y / d;
       ambientLight.intensity = 2;
 
-      multiplySize();
+      multiplyIter++;
+      multiplySize(multiplyIter);
+      
       i--;
     } else if (scaler.angle > Math.PI) {
       poolScaler.unshift(this.scalersInUse.splice(i, 1)[0]);
@@ -1237,10 +1241,17 @@ function addhealth() {
   game.health = Math.min(game.health, 10000000000000000);
 }
 
-function multiplySize() {
-  rocket.mesh.scale.x *= 1.5;
-  rocket.mesh.scale.y *= 1.5;
-  rocket.mesh.scale.z *= 1.5;
+function multiplySize(iter) {
+    if(iter < 10) {
+        rocket.mesh.scale.x *= 1.5;
+        rocket.mesh.scale.y *= 1.5;
+        rocket.mesh.scale.z *= 1.5;
+    }
+    else {
+        rocket.mesh.scale.x *= 1.005;
+        rocket.mesh.scale.y *= 1.005;
+        rocket.mesh.scale.z *= 1.005;
+    }   
 }
 
 function removehealth() {
