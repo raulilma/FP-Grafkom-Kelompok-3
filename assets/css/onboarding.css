@@ -26,3 +26,6 @@ body{
     border-radius: 12px;
     border: none;
 }
+.tombol-play:hover {
+    transform: scale(1.1);
+}
