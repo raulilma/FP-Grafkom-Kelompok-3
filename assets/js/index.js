@@ -1226,7 +1226,13 @@ function updatejarak() {
 var blinkhealth = false;
 
 function addscore() {
-  game.score += game.coinValue;
+    if (multiplyIter < 6) {
+        game.score = game.score + (game.coinValue * (multiplyIter + 1) * 1.1);
+    }
+    else {
+        game.score = game.score + (game.coinValue * (multiplyIter + 1) * 1.5);
+    }
+
   game.score = Math.min(game.score, 10000000000000000);
   fieldscore.innerHTML = Math.floor(game.score);
   if (game.score > game.bestscore) {
